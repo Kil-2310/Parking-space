@@ -1,2 +1,1 @@
-from . import database_models
-from . import models
+from . import database_models, models

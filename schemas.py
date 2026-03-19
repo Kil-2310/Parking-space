@@ -1,7 +1,9 @@
-from pydantic import BaseModel
 from datetime import datetime
 
+from pydantic import BaseModel
+
 # Пользователь
+
 
 class BaseClient(BaseModel):
     name: str
@@ -10,8 +12,7 @@ class BaseClient(BaseModel):
     car_number: str
 
 
-class BaseClientIn(BaseClient):
-    ...
+class BaseClientIn(BaseClient): ...
 
 
 class BaseClientOut(BaseClient):
@@ -20,7 +21,9 @@ class BaseClientOut(BaseClient):
     class Config:
         orm_mode = True
 
+
 # Парковка
+
 
 class BaseParking(BaseModel):
     address: str
@@ -28,8 +31,9 @@ class BaseParking(BaseModel):
     count_places: int
     count_available_places: int
 
-class BaseParkingIn(BaseParking):
-    ...
+
+class BaseParkingIn(BaseParking): ...
+
 
 class BaseParkingOut(BaseParking):
     parking_id: int
@@ -40,13 +44,13 @@ class BaseParkingOut(BaseParking):
 
 # Заезд на парковку
 
+
 class BaseClientParking(BaseModel):
     client_id: int
     parking_id: int
 
 
-class BaseClientParkingIn(BaseClientParking):
-    ...
+class BaseClientParkingIn(BaseClientParking): ...
 
 
 class BaseClientParkingOut(BaseClientParking):
@@ -63,4 +67,3 @@ class BaseClientParkingDelete(BaseClientParking):
 
     class Config:
         orm_mode = True
-
