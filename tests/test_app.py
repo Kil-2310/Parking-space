@@ -51,28 +51,7 @@ def test_create_parking(client):
 def test_create_client_parking(client):
     """Тест въезда на парковку"""
 
-    client_data = {
-        "name": "Иван",
-        "surname": "Петров",
-        "credit_card": "1234-5678-9012-3456",
-        "car_number": "А123БВ777",
-    }
-    client_response = client.put("/clients", json=client_data)
-    assert client_response.status_code == 201
-    client_id = client_response.json()["client_id"]
-
-    parking_data = {
-        "address": "ул. Ленина, д. 10",
-        "opened": True,
-        "count_places": 50,
-        "count_available_places": 50,
-    }
-    parking_response = client.put("/parkings", json=parking_data)
-    assert parking_response.status_code == 201
-    parking_id = parking_response.json()["parking_id"]
-
-    # Въезд
-    client_parking_data = {"client_id": client_id, "parking_id": parking_id}
+    client_parking_data = {"client_id": 1, "parking_id": 1}
 
     response = client.put("/client_parkings", json=client_parking_data)
     assert response.status_code == 201
@@ -83,30 +62,8 @@ def test_create_client_parking(client):
 @pytest.mark.car
 def test_delete_client_parking(client):
     """Тест выезда с парковки"""
-    # Создаем клиента
-    client_data = {
-        "name": "Иван",
-        "surname": "Петров",
-        "credit_card": "1234-5678-9012-3456",
-        "car_number": "А123БВ777",
-    }
-    client_response = client.put("/clients", json=client_data)
-    assert client_response.status_code == 201
-    client_id = client_response.json()["client_id"]
 
-    # Создаем парковку
-    parking_data = {
-        "address": "ул. Ленина, д. 10",
-        "opened": True,
-        "count_places": 50,
-        "count_available_places": 50,
-    }
-    parking_response = client.put("/parkings", json=parking_data)
-    assert parking_response.status_code == 201
-    parking_id = parking_response.json()["parking_id"]
-
-    # Въезд
-    client_parking_data = {"client_id": client_id, "parking_id": parking_id}
+    client_parking_data = {"client_id": 1, "parking_id": 1}
     create_response = client.put("/client_parkings", json=client_parking_data)
     assert create_response.status_code == 201
 

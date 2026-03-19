@@ -5,13 +5,11 @@ import factory
 import factory.fuzzy as fuzzy
 
 from database.database_models import Client, ClientParking, Parking
-from database.models import sync_session
 
 
 class ClientFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Client
-        sqlalchemy_session = sync_session
 
     name = factory.Faker("first_name")
     surname = factory.Faker("last_name")
@@ -27,7 +25,6 @@ class ClientFactory(factory.alchemy.SQLAlchemyModelFactory):
 class ParkingFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Parking
-        sqlalchemy_session = sync_session
 
     address = factory.Faker("address")
     opened = factory.Faker("boolean", chance_of_getting_true=80)
@@ -40,7 +37,6 @@ class ParkingFactory(factory.alchemy.SQLAlchemyModelFactory):
 class ClientParkingFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = ClientParking
-        sqlalchemy_session = sync_session
 
     client = factory.SubFactory(ClientFactory)
     parking = factory.SubFactory(ParkingFactory)

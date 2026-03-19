@@ -1,40 +1,63 @@
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+import asyncio
+import database.models
+
+TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+database.models.DATABASE_URL = TEST_DATABASE_URL 
+database.models.engine = create_async_engine(TEST_DATABASE_URL, echo=True)
+database.models.async_session = sessionmaker(
+    database.models.engine, class_=AsyncSession, expire_on_commit=False
+)
 
 from app import create_app
 from database.database_models import Client, Parking
-from database.models import Base, sync_engine, sync_session
+from database.models import Base
 
 
-@pytest.fixture(autouse=True)
-def setup_database():
+@pytest_asyncio.fixture(autouse=True)
+async def setup_database():
     """Создает таблицы и тестовые данные для каждого теста"""
-    Base.metadata.create_all(bind=sync_engine)
+    async with database.models.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-    with sync_session() as session:
-        with session.begin():
-            client_data = {
-                "name": "Иван",
-                "surname": "Петров",
-                "credit_card": "1234-5678-9012-3456",
-                "car_number": "А123БВ777",
-            }
-            db_client = Client(**client_data)
-            session.add(db_client)
+    async with database.models.async_session() as session:
+        async with session.begin():
+            from sqlalchemy import select
+            
+            result = await session.execute(select(Client))
+            existing_clients = result.scalars().all()
+            
+            if not existing_clients:
+                client_data = {
+                    "name": "Иван",
+                    "surname": "Петров",
+                    "credit_card": "1234-5678-9012-3456",
+                    "car_number": "А123БВ777",
+                }
+                db_client = Client(**client_data)
+                session.add(db_client)
 
-            parking_data = {
-                "address": "ул. Ленина, д. 10",
-                "opened": True,
-                "count_places": 50,
-                "count_available_places": 50,
-            }
-
-            db_parking = Parking(**parking_data)
-            session.add(db_parking)
+            result = await session.execute(select(Parking))
+            existing_parkings = result.scalars().all()
+            
+            if not existing_parkings:
+                parking_data = {
+                    "address": "ул. Ленина, д. 10",
+                    "opened": True,
+                    "count_places": 50,
+                    "count_available_places": 50,
+                }
+                db_parking = Parking(**parking_data)
+                session.add(db_parking)
 
     yield
 
-    Base.metadata.drop_all(bind=sync_engine)
+    async with database.models.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest.fixture
@@ -50,11 +73,8 @@ def client(app):
         yield test_client
 
 
-@pytest.fixture
-def db_session():
-    """Фикстура для работы с БД в тестах"""
-    session = sync_session()
-    try:
+@pytest_asyncio.fixture
+async def db_session():
+    async with database.models.async_session() as session:
         yield session
-    finally:
-        session.close()
+        await session.close()

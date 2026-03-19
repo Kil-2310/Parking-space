@@ -22,9 +22,12 @@ jobs:
     
     - name: Run tests
       run: PYTHONPATH=. pytest tests/ -v
+
+    - name: Run putests
+      run: pytest tests/test_app.py
     
     - name: Check formatting with black
-      run: black --diff --check src/
+      run: black --diff --check app
     
     - name: Lint with flake8
-      run: flake8 src/
+      run: flake8 app
