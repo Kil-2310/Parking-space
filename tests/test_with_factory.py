@@ -1,5 +1,5 @@
 import pytest
-from tests.factories import ClientFactory, ParkingFactory, ClientParkingFactory
+from tests.factories import ClientFactory, ParkingFactory
 
 
 @pytest.mark.asyncio
