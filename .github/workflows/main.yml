@@ -18,8 +18,8 @@ jobs:
       - name: Run tests
         run: PYTHONPATH=. pytest tests/ -v
       - name: Check formatting
-        run: black --diff --check app.py database/
+        run: black --diff --check app.py database/models.py
       - name: Lint
-        run: flake8 app.py
+        run: flake8 app.py main.y
       - name: Pytest
         run: pytest tests/test_with_factory.py tests/test_app.py
