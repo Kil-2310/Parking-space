@@ -28,6 +28,7 @@ def create_app():
         async with async_session() as session:
             async with session.begin():
                 res = await session.execute(select(database_models.Client))
+                print(1)
 
                 return res.scalars().all()
 
