@@ -20,6 +20,6 @@ jobs:
       - name: Check formatting
         run: black --diff --check app.py database/models.py
       - name: Lint
-        run: flake8 app.py main.y
+        run: flake8 app.py main.py
       - name: Pytest
         run: pytest tests/test_with_factory.py tests/test_app.py
