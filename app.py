@@ -47,6 +47,7 @@ def create_app():
                     raise HTTPException(
                         status_code=404, detail=f"Клиент с ID {client_id} не найден"
                     )
+                print(1)
                 return client
 
     @app.put("/clients", status_code=201, response_model=schemas.BaseClientOut)
